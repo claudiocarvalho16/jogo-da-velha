@@ -10,7 +10,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.claudiocarvalho16.jogodavelha",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "CFBundleAllowMixedLocalizations": true
       }
     },
     "android": {
@@ -36,7 +37,26 @@
           "backgroundColor": "#f6f1e9"
         }
       ],
-      "expo-sqlite"
-    ]
+      "expo-sqlite",
+      [
+        "expo-localization",
+        {
+          "supportedLocales": {
+            "ios": [
+              "en",
+              "pt"
+            ],
+            "android": [
+              "en",
+              "pt"
+            ]
+          }
+        }
+      ]
+    ],
+    "locales": {
+      "en": "./locales/en.json",
+      "pt": "./locales/pt.json"
+    }
   }
 }

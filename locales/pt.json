@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "Jogo da Velha"
+  },
+  "android": {
+    "app_name": "Jogo da Velha"
+  }
+}
