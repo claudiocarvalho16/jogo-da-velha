@@ -6,7 +6,17 @@ Dá para jogar com duas pessoas no mesmo celular ou contra o celular, no modo f�
 
 ## Testar no celular
 
-1. Instale o app **Expo Go** no celular (Google Play ou App Store).
+O app tem anúncios (AdMob), que usam código nativo. Por isso ele **não abre no Expo Go**: é preciso instalar uma vez um build de desenvolvimento, que funciona como um Expo Go feito só para este app.
+
+1. Gere e instale o build de desenvolvimento (na nuvem da Expo, sem Mac nem Android Studio):
+
+   ```bash
+   npx eas-cli@latest login
+   npx eas-cli@latest build --profile development --platform android   # ou ios
+   ```
+
+   No fim, o EAS mostra um link e um QR code para instalar o app no celular. Só é preciso refazer esse build quando entrar uma biblioteca nativa nova.
+
 2. No computador, com Node.js 22 instalado:
 
    ```bash
@@ -14,7 +24,9 @@ Dá para jogar com duas pessoas no mesmo celular ou contra o celular, no modo f�
    npm start
    ```
 
-3. Escaneie o QR code que aparece no terminal: no Android pelo próprio Expo Go, no iPhone pela câmera.
+3. Abra o app de desenvolvimento no celular e escaneie o QR code que aparece no terminal.
+
+Os anúncios são de teste (blocos de exemplo do Google), então dá para tocar neles sem risco para a conta do AdMob. Detalhes em [`src/ads/README.md`](src/ads/README.md).
 
 ## Comandos
 

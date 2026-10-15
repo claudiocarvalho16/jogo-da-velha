@@ -1,6 +1,7 @@
 {
   "ios": {
-    "CFBundleDisplayName": "Tic Tac Toe"
+    "CFBundleDisplayName": "Tic Tac Toe",
+    "NSUserTrackingUsageDescription": "Your data will be used to show ads that are more relevant to you."
   },
   "android": {
     "app_name": "Tic Tac Toe"
