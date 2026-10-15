@@ -3,7 +3,7 @@ import { useEffect, useMemo, useReducer, useState } from 'react';
 import { useLocales } from 'expo-localization';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { AdsProvider, useAds } from './src/ads';
+import { AdsProvider, useAds, useInterstitialBetweenRounds } from './src/ads';
 import { chooseMove } from './src/ai';
 import { getStatus } from './src/game';
 import { Language, STRINGS, Strings, pickLanguage } from './src/i18n';
@@ -50,6 +50,7 @@ function Game({ initialThemeId, language }: Props) {
   const { colors, marks } = theme;
   const themeName = t.themeNames[themeId];
   const ads = useAds();
+  const interstitial = useInterstitialBetweenRounds();
 
   useEffect(() => {
     if (!phoneTurn || match.mode === 'dois-jogadores') {
@@ -143,7 +144,12 @@ function Game({ initialThemeId, language }: Props) {
 
       <Pressable
         accessibilityRole="button"
-        onPress={() => dispatch({ type: 'restart' })}
+        onPress={() => {
+          if (status.kind !== 'playing') {
+            interstitial.roundFinished();
+          }
+          dispatch({ type: 'restart' });
+        }}
         style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
       >
         <Text style={styles.buttonText}>{t.newGame}</Text>
