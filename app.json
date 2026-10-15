@@ -68,7 +68,8 @@
         {
           "userTrackingPermission": "Your data will be used to show ads that are more relevant to you."
         }
-      ]
+      ],
+      "./plugins/withGoogleMobileAdsAndroidBackend"
     ],
     "locales": {
       "en": "./locales/en.json",
