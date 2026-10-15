@@ -36,7 +36,8 @@ Na web, os arquivos `.web.ts(x)` deixam tudo desligado.
 
 1. Copie a pasta `src/ads/`.
 2. Instale as dependências: `npx expo install react-native-google-mobile-ads expo-dev-client expo-tracking-transparency`.
-3. Copie do `app.json` os plugins `react-native-google-mobile-ads` (IDs do app) e
+3. Copie do `app.json` o bloco `react-native-google-mobile-ads` da raiz, os plugins
+   `react-native-google-mobile-ads` (IDs do app) e
    `expo-tracking-transparency` (texto do aviso), e o `NSUserTrackingUsageDescription`
    dos arquivos em `locales/`.
 4. Envolva o app em `<AdsProvider>` e mostre o botão de privacidade quando
@@ -44,7 +45,9 @@ Na web, os arquivos `.web.ts(x)` deixam tudo desligado.
 
 ## Antes de publicar
 
-- Troque, no `app.json`, os IDs de app de teste pelos IDs do app no AdMob.
+- Troque, no `app.json`, os IDs de app de teste pelos IDs do app no AdMob, nos dois
+  lugares: no plugin `react-native-google-mobile-ads` e no bloco de mesmo nome na raiz
+  do arquivo (o build Android da biblioteca lê esse bloco).
 - Troque os blocos de `adUnits.ts` pelos blocos reais.
 - No AdMob, crie as mensagens de GDPR e de estados dos EUA em "Privacidade e mensagens";
   sem elas, o formulário de consentimento não aparece.
