@@ -48,3 +48,14 @@ export const mockFullScreenAd = {
 };
 
 export const useInterstitialAd = jest.fn(() => mockFullScreenAd);
+
+/** Vídeo premiado: um objeto separado, para os testes controlarem cada formato. */
+export const mockRewardedAd = {
+  status: 'idle' as string,
+  earnedReward: false,
+  load: jest.fn(),
+  retry: jest.fn(),
+  show: jest.fn(),
+};
+
+export const useRewardedAd = jest.fn(() => mockRewardedAd);

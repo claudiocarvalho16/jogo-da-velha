@@ -25,6 +25,10 @@ Formatos prontos:
   `roundFinished()` quando a pessoa sai de uma partida terminada; o anúncio aparece a
   cada 3 partidas (`ROUNDS_BETWEEN_INTERSTITIALS`), nunca na primeira. Se não houver
   anúncio, tenta carregar de novo no fim da partida seguinte.
+- `useRewardedAction()`: vídeo premiado. `ready` diz se há vídeo pronto (mostre o
+  botão só nesse caso) e `watch(onReward)` mostra o vídeo e chama `onReward` depois
+  que ele é fechado, se a pessoa assistiu até o fim. Sem vídeo, tenta de novo a cada
+  minuto.
 
 Na web, os arquivos `.web.ts(x)` deixam tudo desligado.
 
