@@ -2,6 +2,8 @@
 
 Jogo da velha para Android e iOS, feito com [Expo](https://expo.dev) (React Native).
 
+Dá para jogar com duas pessoas no mesmo celular ou contra o celular, no modo fácil ou imbatível, com placar.
+
 ## Testar no celular
 
 1. Instale o app **Expo Go** no celular (Google Play ou App Store).
