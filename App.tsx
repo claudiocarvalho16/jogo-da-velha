@@ -3,11 +3,11 @@ import { useEffect, useMemo, useReducer, useState } from 'react';
 import { useLocales } from 'expo-localization';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { AdsProvider, useAds, useInterstitialBetweenRounds } from './src/ads';
+import { AdsProvider, useAds, useInterstitialBetweenRounds, useRewardedAction } from './src/ads';
 import { chooseMove } from './src/ai';
 import { getStatus } from './src/game';
 import { Language, STRINGS, Strings, pickLanguage } from './src/i18n';
-import { Mode, PHONE, isPhoneTurn, matchReducer, newMatch } from './src/match';
+import { Mode, PHONE, canUndo, isPhoneTurn, matchReducer, newMatch } from './src/match';
 import { ThemePicker } from './src/ThemePicker';
 import { loadThemeId, saveThemeId } from './src/themeStorage';
 import { THEMES, Theme, ThemeId } from './src/themes';
@@ -51,6 +51,7 @@ function Game({ initialThemeId, language }: Props) {
   const themeName = t.themeNames[themeId];
   const ads = useAds();
   const interstitial = useInterstitialBetweenRounds();
+  const rewarded = useRewardedAction();
 
   useEffect(() => {
     if (!phoneTurn || match.mode === 'dois-jogadores') {
@@ -141,6 +142,17 @@ function Game({ initialThemeId, language }: Props) {
           );
         })}
       </View>
+
+      {rewarded.ready && canUndo(match) && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t.undoWithVideo}
+          onPress={() => rewarded.watch(() => dispatch({ type: 'undo' }))}
+          style={({ pressed }) => [styles.undo, pressed && styles.buttonPressed]}
+        >
+          <Text style={styles.undoText}>▶ {t.undoWithVideo}</Text>
+        </Pressable>
+      )}
 
       <Pressable
         accessibilityRole="button"
@@ -319,6 +331,18 @@ function makeStyles(theme: Theme) {
       color: colors.buttonText,
       fontSize: 18,
       fontWeight: '700',
+    },
+    undo: {
+      marginTop: 20,
+      backgroundColor: colors.modes,
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 999,
+    },
+    undoText: {
+      color: colors.text,
+      fontSize: 15,
+      fontWeight: '600',
     },
     privacy: {
       marginTop: 16,

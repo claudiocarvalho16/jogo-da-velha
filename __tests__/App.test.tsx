@@ -2,7 +2,7 @@ import { afterEach, beforeEach, expect, jest, test } from '@jest/globals';
 import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 
 // @ts-expect-error: só existe na versão falsa do SDK, em __mocks__.
-import { mockFullScreenAd as ad } from 'react-native-google-mobile-ads';
+import { mockFullScreenAd as ad, mockRewardedAd as rewarded } from 'react-native-google-mobile-ads';
 
 import App, { PHONE_DELAY_MS } from '../App';
 import { THEMES } from '../src/themes';
@@ -169,4 +169,26 @@ test('o intersticial só conta partidas terminadas', async () => {
     await fireEvent.press(screen.getByText('Nova partida'));
   }
   expect(ad.show).toHaveBeenCalledTimes(1);
+});
+
+test('contra o celular, desfaz a jogada depois de assistir ao vídeo', async () => {
+  rewarded.status = 'loaded';
+  rewarded.earnedReward = false;
+  const view = await render(<App />);
+  await fireEvent.press(screen.getByText('Fácil'));
+  expect(screen.queryByLabelText('Desfazer jogada (assistir vídeo)')).toBeNull();
+
+  await tap(1);
+  await act(async () => {
+    jest.advanceTimersByTime(PHONE_DELAY_MS);
+  });
+  await fireEvent.press(screen.getByLabelText('Desfazer jogada (assistir vídeo)'));
+  expect(rewarded.show).toHaveBeenCalled();
+
+  // A pessoa assiste até o fim e fecha o vídeo.
+  rewarded.status = 'closed';
+  rewarded.earnedReward = true;
+  await view.rerender(<App />);
+  expect(screen.getByLabelText('Casa 1, vazia')).toBeTruthy();
+  expect(screen.getAllByLabelText(/, vazia$/)).toHaveLength(9);
 });

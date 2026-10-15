@@ -30,6 +30,7 @@ export type Strings = {
   inUse: string;
   backToGame: string;
   privacyOptions: string;
+  undoWithVideo: string;
 };
 
 export const STRINGS: Record<Language, Strings> = {
@@ -56,6 +57,7 @@ export const STRINGS: Record<Language, Strings> = {
     inUse: 'In use',
     backToGame: 'Back to the game',
     privacyOptions: 'Privacy options',
+    undoWithVideo: 'Undo move (watch a video)',
   },
   pt: {
     title: 'Jogo da Velha',
@@ -80,6 +82,7 @@ export const STRINGS: Record<Language, Strings> = {
     inUse: 'Em uso',
     backToGame: 'Voltar ao jogo',
     privacyOptions: 'Opções de privacidade',
+    undoWithVideo: 'Desfazer jogada (assistir vídeo)',
   },
 };
 
