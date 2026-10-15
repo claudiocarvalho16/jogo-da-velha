@@ -4,7 +4,7 @@ import { act, renderHook } from '@testing-library/react-native';
 import { mockRewardedAd as ad } from 'react-native-google-mobile-ads';
 
 import { REWARDED_RETRY_MS, useRewardedAction } from '../src/ads/useRewardedAction';
-import { AdsProvider } from '../src/ads';
+import { AdsProvider } from '../src/ads/AdsProvider';
 
 beforeEach(() => {
   jest.clearAllMocks();

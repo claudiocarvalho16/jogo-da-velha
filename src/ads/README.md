@@ -32,14 +32,26 @@ Formatos prontos:
 
 Na web, os arquivos `.web.ts(x)` deixam tudo desligado.
 
+## Anúncios simulados (Expo Go)
+
+O SDK do Google é código nativo e não existe no Expo Go. Quando o app detecta que o SDK
+não está no binário (`simulate.ts`), `index.ts` usa `simulated.tsx` no lugar de `real.ts`.
+As duas versões têm as mesmas funções; a simulada mostra uma tela falsa no lugar do
+anúncio, com botões para "assistir até o fim" ou "fechar antes" no vídeo premiado.
+Nada em `simulated.tsx` pode importar `react-native-google-mobile-ads`.
+
+Ao criar um formato novo (por exemplo, um banner), exporte-o em `real.ts` e em
+`simulated.tsx`; o TypeScript reclama se um dos dois ficar para trás.
+
 ## Para levar a outro jogo
 
 1. Copie a pasta `src/ads/`.
 2. Instale as dependências: `npx expo install react-native-google-mobile-ads expo-dev-client expo-tracking-transparency`.
 3. Copie do `app.json` o bloco `react-native-google-mobile-ads` da raiz, os plugins
    `react-native-google-mobile-ads` (IDs do app) e
-   `expo-tracking-transparency` (texto do aviso), e o `NSUserTrackingUsageDescription`
-   dos arquivos em `locales/`.
+   `expo-tracking-transparency` (texto do aviso), o plugin local
+   `plugins/withGoogleMobileAdsAndroidBackend.js` (contorna um erro do build Android da
+   biblioteca) e o `NSUserTrackingUsageDescription` dos arquivos em `locales/`.
 4. Envolva o app em `<AdsProvider>` e mostre o botão de privacidade quando
    `privacyOptionsRequired` for verdadeiro.
 
