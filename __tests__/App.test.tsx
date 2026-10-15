@@ -94,3 +94,21 @@ test('um valor salvo inválido volta para o Clássico', async () => {
   await render(<App />);
   expect(screen.getByText('X Tema: Clássico O')).toBeTruthy();
 });
+
+test('placar e mensagens usam os símbolos do tema', async () => {
+  await render(<App initialThemeId="futebol" />);
+  expect(screen.getByText('Vez de ⚽')).toBeTruthy();
+  await tap(1);
+  expect(screen.getByText('Vez de 👟')).toBeTruthy();
+  for (const casa of [4, 2, 5, 3]) {
+    await tap(casa);
+  }
+  expect(screen.getByText('⚽ venceu!')).toBeTruthy();
+  expect(screen.getByLabelText('⚽: 1')).toBeTruthy();
+  expect(screen.getByLabelText('👟: 0')).toBeTruthy();
+
+  await fireEvent.press(screen.getByText('Fácil'));
+  expect(screen.getByText('Sua vez (⚽)')).toBeTruthy();
+  expect(screen.getByLabelText('Você (⚽): 0')).toBeTruthy();
+  expect(screen.getByLabelText('Celular (👟): 0')).toBeTruthy();
+});

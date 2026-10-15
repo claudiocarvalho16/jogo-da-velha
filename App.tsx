@@ -28,7 +28,7 @@ export default function App({ initialThemeId }: { initialThemeId?: ThemeId }) {
   const [pickingTheme, setPickingTheme] = useState(false);
   const theme = THEMES[themeId];
   const styles = useMemo(() => makeStyles(theme), [theme]);
-  const { colors } = theme;
+  const { colors, marks } = theme;
 
   useEffect(() => {
     if (!phoneTurn || match.mode === 'dois-jogadores') {
@@ -44,14 +44,14 @@ export default function App({ initialThemeId }: { initialThemeId?: ThemeId }) {
     if (vsPhone) {
       message = status.winner === PHONE ? 'O celular venceu!' : 'Você venceu!';
     } else {
-      message = `${status.winner} venceu!`;
+      message = `${marks[status.winner]} venceu!`;
     }
   } else if (status.kind === 'draw') {
     message = 'Deu velha! Empate.';
   } else if (vsPhone) {
-    message = phoneTurn ? 'O celular está pensando…' : 'Sua vez (X)';
+    message = phoneTurn ? 'O celular está pensando…' : `Sua vez (${marks.X})`;
   } else {
-    message = `Vez de ${status.next}`;
+    message = `Vez de ${marks[status.next]}`;
   }
 
   return (
@@ -87,9 +87,9 @@ export default function App({ initialThemeId }: { initialThemeId?: ThemeId }) {
       </View>
 
       <View style={styles.score}>
-        <ScoreItem label={vsPhone ? 'Você (X)' : 'X'} value={match.score.X} color={colors.X} styles={styles} />
+        <ScoreItem label={vsPhone ? `Você (${marks.X})` : marks.X} value={match.score.X} color={colors.X} styles={styles} />
         <ScoreItem label="Empates" value={match.score.empates} color={colors.muted} styles={styles} />
-        <ScoreItem label={vsPhone ? 'Celular (O)' : 'O'} value={match.score.O} color={colors.O} styles={styles} />
+        <ScoreItem label={vsPhone ? `Celular (${marks.O})` : marks.O} value={match.score.O} color={colors.O} styles={styles} />
       </View>
 
       <Text style={styles.message} accessibilityLiveRegion="polite">
