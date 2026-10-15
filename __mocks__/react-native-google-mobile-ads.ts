@@ -38,3 +38,13 @@ export const TestIds = {
   INTERSTITIAL: 'test-interstitial',
   REWARDED: 'test-rewarded',
 };
+
+/** Estado de um anúncio de tela cheia; os testes trocam `status` para simular o SDK. */
+export const mockFullScreenAd = {
+  status: 'idle' as string,
+  load: jest.fn(),
+  retry: jest.fn(),
+  show: jest.fn(),
+};
+
+export const useInterstitialAd = jest.fn(() => mockFullScreenAd);

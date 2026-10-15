@@ -19,7 +19,14 @@ As telas usam `useAds()`:
 - `privacyOptionsRequired` e `openPrivacyOptions()`: a lei pede um botão para a
   pessoa rever o consentimento; o app precisa mostrar esse botão.
 
-Na web, `AdsProvider.web.tsx` deixa tudo desligado.
+Formatos prontos:
+
+- `useInterstitialBetweenRounds()`: intersticial entre partidas. O jogo chama
+  `roundFinished()` quando a pessoa sai de uma partida terminada; o anúncio aparece a
+  cada 3 partidas (`ROUNDS_BETWEEN_INTERSTITIALS`), nunca na primeira. Se não houver
+  anúncio, tenta carregar de novo no fim da partida seguinte.
+
+Na web, os arquivos `.web.ts(x)` deixam tudo desligado.
 
 ## Para levar a outro jogo
 

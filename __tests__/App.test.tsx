@@ -1,6 +1,9 @@
 import { afterEach, beforeEach, expect, jest, test } from '@jest/globals';
 import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 
+// @ts-expect-error: só existe na versão falsa do SDK, em __mocks__.
+import { mockFullScreenAd as ad } from 'react-native-google-mobile-ads';
+
 import App, { PHONE_DELAY_MS } from '../App';
 import { THEMES } from '../src/themes';
 
@@ -142,4 +145,28 @@ test('em inglês quando o idioma do aparelho não tem tradução', async () => {
   mockLanguage = 'ja';
   await render(<App />);
   expect(screen.getByText('Tic Tac Toe')).toBeTruthy();
+});
+
+test('o intersticial só conta partidas terminadas', async () => {
+  ad.status = 'loaded';
+  ad.show.mockClear();
+  await render(<App />);
+
+  // Recomeçar no meio da partida não conta.
+  for (let i = 0; i < 3; i++) {
+    await tap(1);
+    await fireEvent.press(screen.getByText('Nova partida'));
+  }
+  expect(ad.show).not.toHaveBeenCalled();
+
+  // Três partidas terminadas (empates), e o anúncio aparece ao sair da terceira.
+  const empate = [1, 2, 3, 5, 4, 6, 8, 7, 9];
+  for (let partida = 0; partida < 3; partida++) {
+    for (const casa of empate) {
+      await tap(casa);
+    }
+    expect(screen.getByText('Deu velha! Empate.')).toBeTruthy();
+    await fireEvent.press(screen.getByText('Nova partida'));
+  }
+  expect(ad.show).toHaveBeenCalledTimes(1);
 });
