@@ -29,6 +29,7 @@ export type Strings = {
   themeOption: (name: string) => string;
   inUse: string;
   backToGame: string;
+  privacyOptions: string;
 };
 
 export const STRINGS: Record<Language, Strings> = {
@@ -54,6 +55,7 @@ export const STRINGS: Record<Language, Strings> = {
     themeOption: (name) => `Theme ${name}`,
     inUse: 'In use',
     backToGame: 'Back to the game',
+    privacyOptions: 'Privacy options',
   },
   pt: {
     title: 'Jogo da Velha',
@@ -77,6 +79,7 @@ export const STRINGS: Record<Language, Strings> = {
     themeOption: (name) => `Tema ${name}`,
     inUse: 'Em uso',
     backToGame: 'Voltar ao jogo',
+    privacyOptions: 'Opções de privacidade',
   },
 };
 

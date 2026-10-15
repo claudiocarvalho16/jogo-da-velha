@@ -3,6 +3,7 @@ import { useEffect, useMemo, useReducer, useState } from 'react';
 import { useLocales } from 'expo-localization';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { AdsProvider, useAds } from './src/ads';
 import { chooseMove } from './src/ai';
 import { getStatus } from './src/game';
 import { Language, STRINGS, Strings, pickLanguage } from './src/i18n';
@@ -27,7 +28,15 @@ type Props = {
   language?: Language;
 };
 
-export default function App({ initialThemeId, language }: Props) {
+export default function App(props: Props) {
+  return (
+    <AdsProvider>
+      <Game {...props} />
+    </AdsProvider>
+  );
+}
+
+function Game({ initialThemeId, language }: Props) {
   const locales = useLocales();
   const t = STRINGS[language ?? pickLanguage(locales)];
   const [match, dispatch] = useReducer(matchReducer, undefined, () => newMatch());
@@ -40,6 +49,7 @@ export default function App({ initialThemeId, language }: Props) {
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { colors, marks } = theme;
   const themeName = t.themeNames[themeId];
+  const ads = useAds();
 
   useEffect(() => {
     if (!phoneTurn || match.mode === 'dois-jogadores') {
@@ -138,6 +148,11 @@ export default function App({ initialThemeId, language }: Props) {
       >
         <Text style={styles.buttonText}>{t.newGame}</Text>
       </Pressable>
+      {ads.privacyOptionsRequired && (
+        <Pressable accessibilityRole="button" onPress={ads.openPrivacyOptions} style={styles.privacy}>
+          <Text style={styles.privacyText}>{t.privacyOptions}</Text>
+        </Pressable>
+      )}
       <ThemePicker
         visible={pickingTheme}
         current={theme}
@@ -298,6 +313,15 @@ function makeStyles(theme: Theme) {
       color: colors.buttonText,
       fontSize: 18,
       fontWeight: '700',
+    },
+    privacy: {
+      marginTop: 16,
+      padding: 8,
+    },
+    privacyText: {
+      color: colors.muted,
+      fontSize: 14,
+      textDecorationLine: 'underline',
     },
   });
 }

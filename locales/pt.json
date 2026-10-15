@@ -1,6 +1,7 @@
 {
   "ios": {
-    "CFBundleDisplayName": "Jogo da Velha"
+    "CFBundleDisplayName": "Jogo da Velha",
+    "NSUserTrackingUsageDescription": "Seus dados serão usados para mostrar anúncios mais relevantes para você."
   },
   "android": {
     "app_name": "Jogo da Velha"

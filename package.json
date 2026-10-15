@@ -4,13 +4,16 @@
   "main": "index.ts",
   "dependencies": {
     "expo": "~57.0.29",
+    "expo-dev-client": "~57.0.20",
     "expo-localization": "~57.0.2",
     "expo-splash-screen": "~57.0.10",
     "expo-sqlite": "~57.0.4",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "~57.0.0",
+    "expo-tracking-transparency": "~57.0.2",
     "react": "19.2.3",
-    "react-native": "0.86.3"
+    "react-native": "0.86.3",
+    "react-native-google-mobile-ads": "^17.2.0"
   },
   "devDependencies": {
     "@react-native/jest-preset": "^0.86.3",
