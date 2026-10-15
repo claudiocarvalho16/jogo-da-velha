@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useMemo, useReducer } from 'react';
+import { useEffect, useMemo, useReducer, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { chooseMove } from './src/ai';
 import { getStatus } from './src/game';
 import { Mode, PHONE, isPhoneTurn, matchReducer, newMatch } from './src/match';
-import { DEFAULT_THEME, THEMES, Theme, ThemeId } from './src/themes';
+import { ThemePicker } from './src/ThemePicker';
+import { loadThemeId, saveThemeId } from './src/themeStorage';
+import { THEMES, Theme, ThemeId } from './src/themes';
 
 /** Pausa antes da jogada do celular, para dar tempo de ver a própria jogada. */
 export const PHONE_DELAY_MS = 500;
@@ -16,11 +18,14 @@ const MODES: { mode: Mode; label: string }[] = [
   { mode: 'imbativel', label: 'Imbatível' },
 ];
 
-export default function App({ themeId = DEFAULT_THEME }: { themeId?: ThemeId }) {
+/** `initialThemeId` substitui o tema salvo; serve para os testes. */
+export default function App({ initialThemeId }: { initialThemeId?: ThemeId }) {
   const [match, dispatch] = useReducer(matchReducer, undefined, () => newMatch());
   const status = getStatus(match.board, match.first);
   const vsPhone = match.mode !== 'dois-jogadores';
   const phoneTurn = isPhoneTurn(match);
+  const [themeId, setThemeId] = useState<ThemeId>(() => initialThemeId ?? loadThemeId());
+  const [pickingTheme, setPickingTheme] = useState(false);
   const theme = THEMES[themeId];
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { colors } = theme;
@@ -52,6 +57,17 @@ export default function App({ themeId = DEFAULT_THEME }: { themeId?: ThemeId }) 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Jogo da Velha</Text>
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`Tema: ${theme.name}. Trocar tema`}
+        onPress={() => setPickingTheme(true)}
+        style={({ pressed }) => [styles.themeButton, pressed && styles.buttonPressed]}
+      >
+        <Text style={styles.themeButtonText}>
+          {theme.marks.X} Tema: {theme.name} {theme.marks.O}
+        </Text>
+      </Pressable>
 
       <View style={styles.modes} accessibilityRole="radiogroup">
         {MODES.map(({ mode, label }) => {
@@ -111,6 +127,16 @@ export default function App({ themeId = DEFAULT_THEME }: { themeId?: ThemeId }) 
       >
         <Text style={styles.buttonText}>Nova partida</Text>
       </Pressable>
+      <ThemePicker
+        visible={pickingTheme}
+        current={theme}
+        onSelect={(id) => {
+          setThemeId(id);
+          saveThemeId(id);
+          setPickingTheme(false);
+        }}
+        onClose={() => setPickingTheme(false)}
+      />
       <StatusBar style={theme.statusBar} />
     </View>
   );
@@ -151,7 +177,19 @@ function makeStyles(theme: Theme) {
       fontSize: 34,
       fontWeight: '800',
       color: colors.text,
-      marginBottom: 20,
+      marginBottom: 12,
+    },
+    themeButton: {
+      backgroundColor: colors.modes,
+      borderRadius: 999,
+      paddingVertical: 6,
+      paddingHorizontal: 14,
+      marginBottom: 16,
+    },
+    themeButtonText: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: colors.text,
     },
     modes: {
       flexDirection: 'row',

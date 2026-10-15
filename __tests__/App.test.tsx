@@ -4,11 +4,20 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react-n
 import App, { PHONE_DELAY_MS } from '../App';
 import { THEMES } from '../src/themes';
 
+const mockStore = new Map<string, string>();
+jest.mock('expo-sqlite/kv-store', () => ({
+  Storage: {
+    getItemSync: (key: string) => mockStore.get(key) ?? null,
+    setItemSync: (key: string, value: string) => mockStore.set(key, value),
+  },
+}));
+
 async function tap(casa: number) {
   await fireEvent.press(screen.getByLabelText(new RegExp(`^Casa ${casa},`)));
 }
 
 beforeEach(() => {
+  mockStore.clear();
   jest.useFakeTimers();
 });
 
@@ -54,9 +63,34 @@ test('contra o celular: ele responde depois da jogada da pessoa', async () => {
 });
 
 test.each(Object.values(THEMES))('tema $name: mostra os símbolos do tema nas casas', async (theme) => {
-  await render(<App themeId={theme.id} />);
+  await render(<App initialThemeId={theme.id} />);
   await tap(1);
   await tap(2);
   expect(within(screen.getByLabelText('Casa 1, X')).getByText(theme.marks.X)).toBeTruthy();
   expect(within(screen.getByLabelText('Casa 2, O')).getByText(theme.marks.O)).toBeTruthy();
+});
+
+test('troca o tema pela tela de escolha e salva a escolha', async () => {
+  await render(<App />);
+  expect(screen.getByText('X Tema: Clássico O')).toBeTruthy();
+
+  await fireEvent.press(screen.getByLabelText('Tema: Clássico. Trocar tema'));
+  await fireEvent.press(screen.getByLabelText('Tema Espaço'));
+  expect(screen.getByText('🚀 Tema: Espaço 👾')).toBeTruthy();
+  await tap(1);
+  expect(within(screen.getByLabelText('Casa 1, X')).getByText('🚀')).toBeTruthy();
+
+  expect(mockStore.get('tema')).toBe('espaco');
+});
+
+test('abre com o tema salvo da última vez', async () => {
+  mockStore.set('tema', 'futebol');
+  await render(<App />);
+  expect(screen.getByText('⚽ Tema: Futebol 👟')).toBeTruthy();
+});
+
+test('um valor salvo inválido volta para o Clássico', async () => {
+  mockStore.set('tema', 'inexistente');
+  await render(<App />);
+  expect(screen.getByText('X Tema: Clássico O')).toBeTruthy();
 });
