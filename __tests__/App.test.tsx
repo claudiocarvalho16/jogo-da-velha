@@ -7,6 +7,9 @@ import { mockFullScreenAd as ad, mockRewardedAd as rewarded } from 'react-native
 import App, { PHONE_DELAY_MS } from '../App';
 import { THEMES } from '../src/themes';
 
+// Estes testes usam o SDK falso de __mocks__; os anúncios simulados têm o seu próprio arquivo.
+jest.mock('../src/ads/simulate', () => ({ SIMULATE_ADS: false }));
+
 // Os testes rodam num aparelho em português, salvo quando dizem outro idioma.
 let mockLanguage = 'pt';
 jest.mock('expo-localization', () => ({

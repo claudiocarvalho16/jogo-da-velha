@@ -3,9 +3,7 @@ import { useInterstitialAd } from 'react-native-google-mobile-ads';
 
 import { AD_UNITS } from './adUnits';
 import { useAds } from './AdsProvider';
-
-/** Quantas partidas terminadas entre um intersticial e outro. */
-export const ROUNDS_BETWEEN_INTERSTITIALS = 3;
+import { ROUNDS_BETWEEN_INTERSTITIALS } from './constants';
 
 /**
  * Intersticial entre partidas: chame `roundFinished()` quando a pessoa sai de uma partida

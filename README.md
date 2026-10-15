@@ -6,9 +6,29 @@ Dá para jogar com duas pessoas no mesmo celular ou contra o celular, no modo f�
 
 ## Testar no celular
 
-O app tem anúncios (AdMob), que usam código nativo. Por isso ele **não abre no Expo Go**: é preciso instalar uma vez um build de desenvolvimento, que funciona como um Expo Go feito só para este app.
+Há dois jeitos, conforme o que você quer ver.
 
-1. Gere e instale o build de desenvolvimento (na nuvem da Expo, sem Mac nem Android Studio):
+### Rápido, no Expo Go (anúncios simulados)
+
+Serve para testar o jogo, a tradução, o intersticial a cada 3 partidas e o desfazer jogada. Os anúncios do Google não existem no Expo Go, então o app mostra telas falsas de anúncio no lugar, com botões para "assistir até o fim" ou "fechar antes".
+
+1. Instale o app **Expo Go** no celular (Google Play ou App Store).
+2. No computador, com Node.js 22 instalado, na pasta do projeto:
+
+   ```bash
+   npm install
+   npm run go
+   ```
+
+3. Escaneie o QR code do terminal: no Android pelo próprio Expo Go, no iPhone pela câmera. O celular e o computador precisam estar na mesma rede Wi-Fi.
+
+Use `npm run go`, e não `npm start`: como o projeto tem o `expo-dev-client`, o `npm start` abre o app de desenvolvimento em vez do Expo Go.
+
+### Completo, com o SDK de anúncios (build de desenvolvimento)
+
+Para ver os anúncios de teste do Google e as telas de consentimento, é preciso um build com o SDK. Ele funciona como um Expo Go feito só para este app.
+
+1. Gere e instale o build (na nuvem da Expo, sem Mac nem Android Studio):
 
    ```bash
    npx eas-cli@latest login
@@ -17,16 +37,9 @@ O app tem anúncios (AdMob), que usam código nativo. Por isso ele **não abre n
 
    No fim, o EAS mostra um link e um QR code para instalar o app no celular. Só é preciso refazer esse build quando entrar uma biblioteca nativa nova.
 
-2. No computador, com Node.js 22 instalado:
+2. Rode `npm start` e abra o app de desenvolvimento no celular.
 
-   ```bash
-   npm install
-   npm start
-   ```
-
-3. Abra o app de desenvolvimento no celular e escaneie o QR code que aparece no terminal.
-
-Os anúncios são de teste (blocos de exemplo do Google), então dá para tocar neles sem risco para a conta do AdMob. Detalhes em [`src/ads/README.md`](src/ads/README.md).
+Os anúncios desse build são de teste (blocos de exemplo do Google), então dá para tocar neles sem risco para a conta do AdMob. Detalhes em [`src/ads/README.md`](src/ads/README.md).
 
 ## Comandos
 
