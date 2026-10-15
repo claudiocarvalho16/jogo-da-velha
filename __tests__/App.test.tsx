@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, expect, jest, test } from '@jest/globals';
-import { act, fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
 
 import App, { PHONE_DELAY_MS } from '../App';
+import { THEMES } from '../src/themes';
 
 async function tap(casa: number) {
   await fireEvent.press(screen.getByLabelText(new RegExp(`^Casa ${casa},`)));
@@ -50,4 +51,12 @@ test('contra o celular: ele responde depois da jogada da pessoa', async () => {
   expect(screen.getByText('Sua vez (X)')).toBeTruthy();
   // Contra um canto, o jogo perfeito responde no centro.
   expect(screen.getByLabelText('Casa 5, O')).toBeTruthy();
+});
+
+test.each(Object.values(THEMES))('tema $name: mostra os símbolos do tema nas casas', async (theme) => {
+  await render(<App themeId={theme.id} />);
+  await tap(1);
+  await tap(2);
+  expect(within(screen.getByLabelText('Casa 1, X')).getByText(theme.marks.X)).toBeTruthy();
+  expect(within(screen.getByLabelText('Casa 2, O')).getByText(theme.marks.O)).toBeTruthy();
 });

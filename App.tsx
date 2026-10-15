@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { chooseMove } from './src/ai';
 import { getStatus } from './src/game';
 import { Mode, PHONE, isPhoneTurn, matchReducer, newMatch } from './src/match';
-import { DEFAULT_THEME, THEMES, Theme } from './src/themes';
+import { DEFAULT_THEME, THEMES, Theme, ThemeId } from './src/themes';
 
 /** Pausa antes da jogada do celular, para dar tempo de ver a própria jogada. */
 export const PHONE_DELAY_MS = 500;
@@ -16,12 +16,12 @@ const MODES: { mode: Mode; label: string }[] = [
   { mode: 'imbativel', label: 'Imbatível' },
 ];
 
-export default function App() {
+export default function App({ themeId = DEFAULT_THEME }: { themeId?: ThemeId }) {
   const [match, dispatch] = useReducer(matchReducer, undefined, () => newMatch());
   const status = getStatus(match.board, match.first);
   const vsPhone = match.mode !== 'dois-jogadores';
   const phoneTurn = isPhoneTurn(match);
-  const theme = THEMES[DEFAULT_THEME];
+  const theme = THEMES[themeId];
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { colors } = theme;
 
