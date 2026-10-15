@@ -4,6 +4,12 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react-n
 import App, { PHONE_DELAY_MS } from '../App';
 import { THEMES } from '../src/themes';
 
+// Os testes rodam num aparelho em português, salvo quando dizem outro idioma.
+let mockLanguage = 'pt';
+jest.mock('expo-localization', () => ({
+  useLocales: () => [{ languageCode: mockLanguage }],
+}));
+
 const mockStore = new Map<string, string>();
 jest.mock('expo-sqlite/kv-store', () => ({
   Storage: {
@@ -17,6 +23,7 @@ async function tap(casa: number) {
 }
 
 beforeEach(() => {
+  mockLanguage = 'pt';
   mockStore.clear();
   jest.useFakeTimers();
 });
@@ -111,4 +118,28 @@ test('placar e mensagens usam os símbolos do tema', async () => {
   expect(screen.getByText('Sua vez (⚽)')).toBeTruthy();
   expect(screen.getByLabelText('Você (⚽): 0')).toBeTruthy();
   expect(screen.getByLabelText('Celular (👟): 0')).toBeTruthy();
+});
+
+test('em inglês quando o aparelho está em inglês', async () => {
+  mockLanguage = 'en';
+  await render(<App />);
+  expect(screen.getByText('Tic Tac Toe')).toBeTruthy();
+  expect(screen.getByText('X Theme: Classic O')).toBeTruthy();
+  expect(screen.getByText("X's turn")).toBeTruthy();
+  for (const casa of [1, 4, 2, 5, 3]) {
+    await fireEvent.press(screen.getByLabelText(new RegExp(`^Square ${casa},`)));
+  }
+  expect(screen.getByText('X wins!')).toBeTruthy();
+  expect(screen.getByText('New game')).toBeTruthy();
+
+  await fireEvent.press(screen.getByLabelText('Theme: Classic. Change theme'));
+  expect(screen.getByText('Choose a theme')).toBeTruthy();
+  await fireEvent.press(screen.getByLabelText('Theme Space'));
+  expect(screen.getByText('🚀 Theme: Space 👾')).toBeTruthy();
+});
+
+test('em inglês quando o idioma do aparelho não tem tradução', async () => {
+  mockLanguage = 'ja';
+  await render(<App />);
+  expect(screen.getByText('Tic Tac Toe')).toBeTruthy();
 });

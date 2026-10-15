@@ -3,7 +3,7 @@ import { expect, test } from '@jest/globals';
 import { DEFAULT_THEME, THEMES } from '../src/themes';
 
 test('o tema padrão existe e é o Clássico', () => {
-  expect(THEMES[DEFAULT_THEME].name).toBe('Clássico');
+  expect(THEMES[DEFAULT_THEME].id).toBe('classico');
 });
 
 test('cada tema tem símbolos e cores diferentes para X e O', () => {

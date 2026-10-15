@@ -4,7 +4,6 @@ export type ThemeId = 'classico' | 'espaco' | 'doces' | 'futebol';
 
 export type Theme = {
   id: ThemeId;
-  name: string;
   /** Estilo dos ícones da barra de status: 'dark' em fundos claros, 'light' em fundos escuros. */
   statusBar: 'dark' | 'light';
   /** O que aparece na casa para cada jogador. */
@@ -27,7 +26,6 @@ export type Theme = {
 export const THEMES: Record<ThemeId, Theme> = {
   classico: {
     id: 'classico',
-    name: 'Clássico',
     statusBar: 'dark',
     marks: { X: 'X', O: 'O' },
     colors: {
@@ -46,7 +44,6 @@ export const THEMES: Record<ThemeId, Theme> = {
   },
   espaco: {
     id: 'espaco',
-    name: 'Espaço',
     statusBar: 'light',
     marks: { X: '🚀', O: '👾' },
     colors: {
@@ -65,7 +62,6 @@ export const THEMES: Record<ThemeId, Theme> = {
   },
   doces: {
     id: 'doces',
-    name: 'Doces',
     statusBar: 'dark',
     marks: { X: '🧁', O: '🍭' },
     colors: {
@@ -84,7 +80,6 @@ export const THEMES: Record<ThemeId, Theme> = {
   },
   futebol: {
     id: 'futebol',
-    name: 'Futebol',
     statusBar: 'light',
     marks: { X: '⚽', O: '👟' },
     colors: {

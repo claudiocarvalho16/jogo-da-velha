@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "CFBundleDisplayName": "Tic Tac Toe"
+  },
+  "android": {
+    "app_name": "Tic Tac Toe"
+  }
+}

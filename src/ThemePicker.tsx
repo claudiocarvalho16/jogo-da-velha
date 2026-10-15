@@ -1,22 +1,24 @@
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { Strings } from './i18n';
 import { THEMES, Theme, ThemeId } from './themes';
 
 type Props = {
   visible: boolean;
   current: Theme;
+  strings: Strings;
   onSelect: (id: ThemeId) => void;
   onClose: () => void;
 };
 
 /** Tela de escolha do tema, com uma prévia de cada um. */
-export function ThemePicker({ visible, current, onSelect, onClose }: Props) {
+export function ThemePicker({ visible, current, strings: t, onSelect, onClose }: Props) {
   const { colors } = current;
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <Text style={[styles.title, { color: colors.text }]} accessibilityRole="header">
-          Escolha o tema
+          {t.pickTheme}
         </Text>
         <ScrollView contentContainerStyle={styles.list}>
           {Object.values(THEMES).map((theme) => {
@@ -26,7 +28,7 @@ export function ThemePicker({ visible, current, onSelect, onClose }: Props) {
                 key={theme.id}
                 accessibilityRole="radio"
                 accessibilityState={{ selected }}
-                accessibilityLabel={`Tema ${theme.name}`}
+                accessibilityLabel={t.themeOption(t.themeNames[theme.id])}
                 onPress={() => onSelect(theme.id)}
                 style={({ pressed }) => [
                   styles.card,
@@ -36,8 +38,8 @@ export function ThemePicker({ visible, current, onSelect, onClose }: Props) {
                 ]}
               >
                 <Preview theme={theme} />
-                <Text style={[styles.name, { color: theme.colors.text }]}>{theme.name}</Text>
-                {selected && <Text style={[styles.badge, { color: theme.colors.muted }]}>Em uso</Text>}
+                <Text style={[styles.name, { color: theme.colors.text }]}>{t.themeNames[theme.id]}</Text>
+                {selected && <Text style={[styles.badge, { color: theme.colors.muted }]}>{t.inUse}</Text>}
               </Pressable>
             );
           })}
@@ -51,7 +53,7 @@ export function ThemePicker({ visible, current, onSelect, onClose }: Props) {
             pressed && styles.cardPressed,
           ]}
         >
-          <Text style={[styles.closeText, { color: colors.buttonText }]}>Voltar ao jogo</Text>
+          <Text style={[styles.closeText, { color: colors.buttonText }]}>{t.backToGame}</Text>
         </Pressable>
       </View>
     </Modal>

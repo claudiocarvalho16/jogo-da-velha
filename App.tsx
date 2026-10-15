@@ -1,9 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useLocales } from 'expo-localization';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { chooseMove } from './src/ai';
 import { getStatus } from './src/game';
+import { Language, STRINGS, Strings, pickLanguage } from './src/i18n';
 import { Mode, PHONE, isPhoneTurn, matchReducer, newMatch } from './src/match';
 import { ThemePicker } from './src/ThemePicker';
 import { loadThemeId, saveThemeId } from './src/themeStorage';
@@ -12,14 +14,22 @@ import { THEMES, Theme, ThemeId } from './src/themes';
 /** Pausa antes da jogada do celular, para dar tempo de ver a própria jogada. */
 export const PHONE_DELAY_MS = 500;
 
-const MODES: { mode: Mode; label: string }[] = [
-  { mode: 'dois-jogadores', label: '2 jogadores' },
-  { mode: 'facil', label: 'Fácil' },
-  { mode: 'imbativel', label: 'Imbatível' },
+const MODES: { mode: Mode; label: keyof Strings['modes'] }[] = [
+  { mode: 'dois-jogadores', label: 'twoPlayers' },
+  { mode: 'facil', label: 'easy' },
+  { mode: 'imbativel', label: 'unbeatable' },
 ];
 
-/** `initialThemeId` substitui o tema salvo; serve para os testes. */
-export default function App({ initialThemeId }: { initialThemeId?: ThemeId }) {
+type Props = {
+  /** Substitui o tema salvo; serve para os testes. */
+  initialThemeId?: ThemeId;
+  /** Substitui o idioma do aparelho; serve para os testes. */
+  language?: Language;
+};
+
+export default function App({ initialThemeId, language }: Props) {
+  const locales = useLocales();
+  const t = STRINGS[language ?? pickLanguage(locales)];
   const [match, dispatch] = useReducer(matchReducer, undefined, () => newMatch());
   const status = getStatus(match.board, match.first);
   const vsPhone = match.mode !== 'dois-jogadores';
@@ -29,6 +39,7 @@ export default function App({ initialThemeId }: { initialThemeId?: ThemeId }) {
   const theme = THEMES[themeId];
   const styles = useMemo(() => makeStyles(theme), [theme]);
   const { colors, marks } = theme;
+  const themeName = t.themeNames[themeId];
 
   useEffect(() => {
     if (!phoneTurn || match.mode === 'dois-jogadores') {
@@ -42,30 +53,30 @@ export default function App({ initialThemeId }: { initialThemeId?: ThemeId }) {
   let message: string;
   if (status.kind === 'won') {
     if (vsPhone) {
-      message = status.winner === PHONE ? 'O celular venceu!' : 'Você venceu!';
+      message = status.winner === PHONE ? t.phoneWon : t.youWon;
     } else {
-      message = `${marks[status.winner]} venceu!`;
+      message = t.playerWon(marks[status.winner]);
     }
   } else if (status.kind === 'draw') {
-    message = 'Deu velha! Empate.';
+    message = t.draw;
   } else if (vsPhone) {
-    message = phoneTurn ? 'O celular está pensando…' : `Sua vez (${marks.X})`;
+    message = phoneTurn ? t.phoneThinking : t.yourTurn(marks.X);
   } else {
-    message = `Vez de ${marks[status.next]}`;
+    message = t.turnOf(marks[status.next]);
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Jogo da Velha</Text>
+      <Text style={styles.title}>{t.title}</Text>
 
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`Tema: ${theme.name}. Trocar tema`}
+        accessibilityLabel={t.themeButtonLabel(themeName)}
         onPress={() => setPickingTheme(true)}
         style={({ pressed }) => [styles.themeButton, pressed && styles.buttonPressed]}
       >
         <Text style={styles.themeButtonText}>
-          {theme.marks.X} Tema: {theme.name} {theme.marks.O}
+          {theme.marks.X} {t.themeButton(themeName)} {theme.marks.O}
         </Text>
       </Pressable>
 
@@ -80,16 +91,16 @@ export default function App({ initialThemeId }: { initialThemeId?: ThemeId }) {
               onPress={() => dispatch({ type: 'setMode', mode })}
               style={[styles.mode, selected && styles.modeSelected]}
             >
-              <Text style={[styles.modeText, selected && styles.modeTextSelected]}>{label}</Text>
+              <Text style={[styles.modeText, selected && styles.modeTextSelected]}>{t.modes[label]}</Text>
             </Pressable>
           );
         })}
       </View>
 
       <View style={styles.score}>
-        <ScoreItem label={vsPhone ? `Você (${marks.X})` : marks.X} value={match.score.X} color={colors.X} styles={styles} />
-        <ScoreItem label="Empates" value={match.score.empates} color={colors.muted} styles={styles} />
-        <ScoreItem label={vsPhone ? `Celular (${marks.O})` : marks.O} value={match.score.O} color={colors.O} styles={styles} />
+        <ScoreItem label={vsPhone ? `${t.you} (${marks.X})` : marks.X} value={match.score.X} color={colors.X} styles={styles} />
+        <ScoreItem label={t.draws} value={match.score.empates} color={colors.muted} styles={styles} />
+        <ScoreItem label={vsPhone ? `${t.phone} (${marks.O})` : marks.O} value={match.score.O} color={colors.O} styles={styles} />
       </View>
 
       <Text style={styles.message} accessibilityLiveRegion="polite">
@@ -103,7 +114,7 @@ export default function App({ initialThemeId }: { initialThemeId?: ThemeId }) {
             <Pressable
               key={index}
               accessibilityRole="button"
-              accessibilityLabel={`Casa ${index + 1}${cell ? `, ${cell}` : ', vazia'}`}
+              accessibilityLabel={t.cellLabel(index + 1, cell)}
               disabled={phoneTurn}
               onPress={() => dispatch({ type: 'play', index })}
               style={({ pressed }) => [
@@ -125,11 +136,12 @@ export default function App({ initialThemeId }: { initialThemeId?: ThemeId }) {
         onPress={() => dispatch({ type: 'restart' })}
         style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
       >
-        <Text style={styles.buttonText}>Nova partida</Text>
+        <Text style={styles.buttonText}>{t.newGame}</Text>
       </Pressable>
       <ThemePicker
         visible={pickingTheme}
         current={theme}
+        strings={t}
         onSelect={(id) => {
           setThemeId(id);
           saveThemeId(id);
